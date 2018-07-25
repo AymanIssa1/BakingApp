@@ -74,7 +74,6 @@ public class StepDetailsActivityFragment extends Fragment {
 
         setNavigationButtons();
         setStepDescriptionTextView();
-        initializePlayer();
 
         return rootView;
     }
@@ -121,6 +120,14 @@ public class StepDetailsActivityFragment extends Fragment {
 
     void setStepDescriptionTextView() {
         stepDescriptionTextView.setText(stepList.get(position).getDescription());
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Util.SDK_INT > 23) {
+            initializePlayer();
+        }
     }
 
 

@@ -102,8 +102,10 @@ public class MainActivityFragment extends Fragment implements RecipeAdapterListe
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putParcelableArrayList(Constants.RECIPES_LIST_EXTRA, recipesList);
 
-        mListState = gridLayoutManager.onSaveInstanceState();
-        outState.putParcelable(Constants.LIST_STATE_EXTRA, mListState);
+        if (gridLayoutManager != null) {
+            mListState = gridLayoutManager.onSaveInstanceState();
+            outState.putParcelable(Constants.LIST_STATE_EXTRA, mListState);
+        }
     }
 
     void getRecipes() {

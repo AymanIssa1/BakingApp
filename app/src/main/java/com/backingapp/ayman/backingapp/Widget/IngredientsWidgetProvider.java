@@ -5,7 +5,9 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.backingapp.ayman.backingapp.Constants;
@@ -13,6 +15,7 @@ import com.backingapp.ayman.backingapp.Models.Ingredient;
 import com.backingapp.ayman.backingapp.Models.Recipe;
 import com.backingapp.ayman.backingapp.R;
 import com.backingapp.ayman.backingapp.UI.StepsActivity;
+import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -20,6 +23,8 @@ import java.util.List;
  * Implementation of App Widget functionality.
  */
 public class IngredientsWidgetProvider extends AppWidgetProvider {
+
+    public static List<Ingredient> ingredientList;
 
     static void updateAppWidget(Context context, Recipe recipe, AppWidgetManager appWidgetManager, int appWidgetId) {
 
@@ -33,13 +38,23 @@ public class IngredientsWidgetProvider extends AppWidgetProvider {
 
         intent.putExtras(bundle);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
 
         views.setTextViewText(R.id.recipeTitleTextView, recipe.getName());
+        Log.e("updateAppWidget",new Gson().toJson(recipe));
+        Intent listIntent = new Intent(context,ListViewWidgetService.class);
+//        listIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+//        listIntent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
 
+//        Bundle listBundle = new Bundle();
+//        listIntent.putExtra(Constants.RECIPE_EXTRA, recipe);
+//        intent.putExtras(listBundle);
 
-        views.setTextViewText(R.id.ingredientsListViewWidget, getRecipeIngredients(recipe.getIngredients()));
+        ingredientList = recipe.getIngredients();
 
+        views.setRemoteAdapter(R.id.ingredientsListViewWidget,listIntent);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         views.setOnClickPendingIntent(R.id.widgetLayout, pendingIntent);
 
         // Instruct the widget manager to update the widget
@@ -71,6 +86,12 @@ public class IngredientsWidgetProvider extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+        Log.e("IngredientsWidgetProvider","onReceive");
     }
 
     @Override
