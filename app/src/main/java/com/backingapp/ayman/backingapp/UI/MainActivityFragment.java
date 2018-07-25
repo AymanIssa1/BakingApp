@@ -27,6 +27,10 @@ import com.backingapp.ayman.backingapp.Models.Recipe;
 import com.backingapp.ayman.backingapp.R;
 import com.backingapp.ayman.backingapp.RecipesController;
 import com.backingapp.ayman.backingapp.RecipesViewModel;
+import com.zplesac.connectionbuddy.ConnectionBuddy;
+import com.zplesac.connectionbuddy.interfaces.ConnectivityChangeListener;
+import com.zplesac.connectionbuddy.models.ConnectivityEvent;
+import com.zplesac.connectionbuddy.models.ConnectivityState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +41,7 @@ import butterknife.ButterKnife;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment implements RecipeAdapterListener, Observer<List<Recipe>> {
+public class MainActivityFragment extends Fragment implements RecipeAdapterListener, Observer<List<Recipe>>, ConnectivityChangeListener {
 
     @BindView(R.id.recipeRecyclerView) RecyclerView recipeRecyclerView;
     OnRecipeItemClickListener mCallback;
@@ -74,11 +78,24 @@ public class MainActivityFragment extends Fragment implements RecipeAdapterListe
         } else {
             recipesViewModel = ViewModelProviders.of(this).get(RecipesViewModel.class);
             recipesViewModel.getRecipesLiveData().observe(this, this);
-            getRecipes();
+
         }
 
         return rootView;
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ConnectionBuddy.getInstance().registerForConnectivityEvents(this, this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ConnectionBuddy.getInstance().unregisterFromConnectivityEvents(this);
+    }
+
 
     @Override
     public void onResume() {
@@ -126,7 +143,7 @@ public class MainActivityFragment extends Fragment implements RecipeAdapterListe
 
     void initRecipeAdapter(List<Recipe> recipeList) {
         recipeAdapter = new RecipeAdapter(recipeList, this);
-        if (isTablet(getContext())) {
+        if (getResources().getBoolean(R.bool.isTablet)) {
             if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                 gridLayoutManager = new GridLayoutManager(getActivity(), 2);
             } else {
@@ -183,6 +200,17 @@ public class MainActivityFragment extends Fragment implements RecipeAdapterListe
     @Override
     public void onChanged(@Nullable List<Recipe> recipes) {
         initRecipeAdapter(recipes);
+    }
+
+    @Override
+    public void onConnectionChange(ConnectivityEvent event) {
+        if (event.getState().getValue() == ConnectivityState.CONNECTED) {
+            // device has active internet connection
+            getRecipes();
+        } else {
+            // there is no active internet connection on this device
+        }
+
     }
 
     public interface OnRecipeItemClickListener {

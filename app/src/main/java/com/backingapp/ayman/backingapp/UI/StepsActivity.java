@@ -27,6 +27,8 @@ public class StepsActivity extends AppCompatActivity implements StepsActivityFra
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        toolbar.setNavigationOnClickListener(v -> finish());
+
         Recipe recipe = getIntent().getParcelableExtra(Constants.RECIPE_EXTRA);
 
         StepsActivityFragment stepsActivityFragment = new StepsActivityFragment();
@@ -37,7 +39,7 @@ public class StepsActivity extends AppCompatActivity implements StepsActivityFra
                 .add(R.id.container, stepsActivityFragment)
                 .commit();
 
-        if (findViewById(R.id.detailsContainer) != null) {
+        if (getResources().getBoolean(R.bool.isTablet)) {
             mTwoPane = true;
 
             StepDetailsActivityFragment stepsDetailsActivityFragment = new StepDetailsActivityFragment();

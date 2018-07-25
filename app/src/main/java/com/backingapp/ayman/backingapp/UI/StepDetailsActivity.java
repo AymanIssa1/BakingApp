@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.backingapp.ayman.backingapp.Constants;
 import com.backingapp.ayman.backingapp.Models.Step;
@@ -22,6 +23,8 @@ public class StepDetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        toolbar.setNavigationOnClickListener(v -> finish());
 
         if (savedInstanceState == null) {
             ArrayList<Step> steps = getIntent().getParcelableArrayListExtra(Constants.STEPS_LIST_EXTRA);
@@ -43,5 +46,7 @@ public class StepDetailsActivity extends AppCompatActivity {
                     .commit();
         }
     }
+
+
 
 }

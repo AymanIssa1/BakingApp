@@ -91,6 +91,7 @@ public class StepDetailsActivityFragment extends Fragment {
     void onPreviousButtonClick() {
         if (position > 0)
             position--;
+        player.release();
         setNavigationButtons();
         setStepDescriptionTextView();
         initializePlayer();
@@ -100,6 +101,7 @@ public class StepDetailsActivityFragment extends Fragment {
     void onNextButtonClick() {
         if (position < stepList.size())
             position++;
+        player.release();
         setNavigationButtons();
         setStepDescriptionTextView();
         initializePlayer();
